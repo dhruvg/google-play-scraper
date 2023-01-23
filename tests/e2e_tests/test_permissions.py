@@ -5,7 +5,7 @@ from google_play_scraper.features.permissions import permissions
 
 class TestPermission(TestCase):
     def test_reply_data_all_types(self):
-        result = permissions("com.spotify.music", lang="en", country="us")
+        result = permissions(7, "com.spotify.music", lang="en", country="us")
 
         self.assertDictEqual(
             {
@@ -46,7 +46,7 @@ class TestPermission(TestCase):
         )
 
     def test_reply_data_only_other_type(self):
-        result = permissions("example.matharithmetics", lang="en", country="us")
+        result = permissions(7, "example.matharithmetics", lang="en", country="us")
 
         self.assertDictEqual(
             {

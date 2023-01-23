@@ -27,6 +27,7 @@ class _ContinuationToken:
 
 def _fetch_review_items(
     url: str,
+    store_id: int,
     app_id: str,
     sort: int,
     count: int,
@@ -36,6 +37,7 @@ def _fetch_review_items(
     dom = post(
         url,
         Formats.Reviews.build_body(
+            store_id,
             app_id,
             sort,
             count,
@@ -51,6 +53,7 @@ def _fetch_review_items(
 
 
 def reviews(
+    store_id: int,
     app_id: str,
     lang: str = "en",
     country: str = "us",
@@ -91,7 +94,7 @@ def reviews(
 
         try:
             review_items, token = _fetch_review_items(
-                url, app_id, sort, _fetch_count, filter_score_with, token
+                url, store_id, app_id, sort, _fetch_count, filter_score_with, token
             )
         except (TypeError, IndexError):
             token = None
@@ -117,7 +120,7 @@ def reviews(
     )
 
 
-def reviews_all(app_id: str, sleep_milliseconds: int = 0, **kwargs) -> list:
+def reviews_all(store_id: int, app_id: str, sleep_milliseconds: int = 0, **kwargs) -> list:
     kwargs.pop("count", None)
     kwargs.pop("continuation_token", None)
 
@@ -127,6 +130,7 @@ def reviews_all(app_id: str, sleep_milliseconds: int = 0, **kwargs) -> list:
 
     while True:
         _result, continuation_token = reviews(
+            store_id,
             app_id,
             count=MAX_COUNT_EACH_FETCH,
             continuation_token=continuation_token,

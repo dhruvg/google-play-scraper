@@ -14,6 +14,7 @@ from google_play_scraper.features.reviews import (
 class TestReviews(TestCase):
     def test_sort_by_newest(self):
         result, pagination_token = reviews(
+            7,
             "com.mojang.minecraftpe", sort=Sort.NEWEST, count=500
         )
 
@@ -57,7 +58,7 @@ class TestReviews(TestCase):
         self.assertTrue(well_sorted_review_count > 490)
 
     def test_sort_by_most_relevant(self):
-        result, _ = reviews("com.mojang.minecraftpe", sort=Sort.MOST_RELEVANT, count=30)
+        result, _ = reviews(7, "com.mojang.minecraftpe", sort=Sort.MOST_RELEVANT, count=30)
 
         self.assertEqual(30, len(result))
 
@@ -72,6 +73,7 @@ class TestReviews(TestCase):
     def test_score_filter(self):
         for score in {1, 2, 3, 4, 5}:
             result, _ = reviews(
+                7,
                 "com.mojang.minecraftpe",
                 sort=Sort.NEWEST,
                 count=300,
@@ -86,6 +88,7 @@ class TestReviews(TestCase):
         """
 
         result, _ = reviews(
+            7,
             "com.ekkorr.endlessfrontier",
             lang="ko",
             country="kr",
@@ -122,7 +125,7 @@ class TestReviews(TestCase):
         tests length of results of first request is lower than specified count argument
         """
 
-        result, ct = reviews("com.ekkorr.endlessfrontier")
+        result, ct = reviews(7, "com.ekkorr.endlessfrontier")
 
         self.assertTrue(len(result) < 100)
 
@@ -133,7 +136,7 @@ class TestReviews(TestCase):
         tests continuation_token parameter
         """
 
-        result, continuation_token = reviews("com.mojang.minecraftpe")
+        result, continuation_token = reviews(7, "com.mojang.minecraftpe")
 
         self.assertEqual(100, len(result))
         self.assertIsNotNone(continuation_token)
@@ -147,6 +150,7 @@ class TestReviews(TestCase):
         last_review_at = result[0]["at"]
 
         result, _ = reviews(
+            7,
             "com.mojang.minecraftpe", continuation_token=continuation_token
         )
 
@@ -164,6 +168,7 @@ class TestReviews(TestCase):
         """
 
         result, continuation_token = reviews(
+            7,
             "com.mojang.minecraftpe",
             lang="ko",
             country="kr",
@@ -185,7 +190,7 @@ class TestReviews(TestCase):
             "google_play_scraper.features.reviews._fetch_review_items",
             wraps=_fetch_review_items,
         ) as m:
-            _ = reviews("com.mojang.minecraftpe", continuation_token=continuation_token)
+            _ = reviews(7, "com.mojang.minecraftpe", continuation_token=continuation_token)
 
             self.assertEqual("hl=ko&gl=kr", urlparse(m.call_args[0][0]).query)
             self.assertEqual(Sort.MOST_RELEVANT, m.call_args[0][2])
@@ -204,6 +209,7 @@ class TestReviews(TestCase):
             wraps=_fetch_review_items,
         ) as m:
             _ = reviews(
+                7,
                 "com.mojang.minecraftpe",
                 continuation_token=_ContinuationToken(
                     "", "ko", "kr", Sort.MOST_RELEVANT, 10, 5
@@ -222,6 +228,7 @@ class TestReviews(TestCase):
 
     def test_invalid_continuation_token(self):
         result, ct = reviews(
+            7,
             "com.mojang.minecraftpe",
             continuation_token=_ContinuationToken(
                 "foo", "ko", "kr", Sort.MOST_RELEVANT, 10, 5
@@ -238,7 +245,7 @@ class TestReviews(TestCase):
         self.assertEqual(5, ct.filter_score_with)
 
     def test_no_reviews(self):
-        result, ct = reviews("product.dp.io.ab180blog", lang="sw", country="it")
+        result, ct = reviews(7, "product.dp.io.ab180blog", lang="sw", country="it")
 
         self.assertListEqual([], result)
 

@@ -146,6 +146,7 @@ Result of `print(result)`:
 from google_play_scraper import Sort, reviews
 
 result, continuation_token = reviews(
+    7,
     'com.fantome.penguinisle',
     lang='en', # defaults to 'en'
     country='us', # defaults to 'us'
@@ -158,6 +159,7 @@ result, continuation_token = reviews(
 # it will crawl the items after 3 review items.
 
 result, _ = reviews(
+    7,
     'com.fantome.penguinisle',
     continuation_token=continuation_token # defaults to None(load from the beginning)
 )
@@ -215,6 +217,7 @@ Result of `print(result)`:
 from google_play_scraper import Sort, reviews_all
 
 result = reviews_all(
+    7,
     'com.fantome.penguinisle',
     sleep_milliseconds=0, # defaults to 0
     lang='en', # defaults to 'en'
@@ -232,6 +235,7 @@ result = reviews_all(
 from google_play_scraper import permissions
 
 result = permissions(
+    7,
     'com.spotify.music',
     lang='en', # defaults to 'en'
     country='us', # defaults to 'us'

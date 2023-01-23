@@ -7,10 +7,10 @@ from google_play_scraper.utils.request import post
 from google_play_scraper.constants.element import ElementSpecs
 
 
-def permissions(app_id: str, lang: str = "en", country: str = "us") -> Dict[str, list]:
+def permissions(store_id: int, app_id: str, lang: str = "en", country: str = "us") -> Dict[str, list]:
     dom = post(
         Formats.Permissions.build(lang=lang, country=country),
-        Formats.Permissions.build_body(app_id),
+        Formats.Permissions.build_body(store_id, app_id),
         {"content-type": "application/x-www-form-urlencoded"},
     )
 
