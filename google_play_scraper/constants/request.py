@@ -42,6 +42,9 @@ class Formats:
         PAYLOAD_FORMAT_FOR_FIRST_PAGE = "f.req=%5B%5B%5B%22UsvDTd%22%2C%22%5Bnull%2Cnull%2C%5B2%2C{sort}%2C%5B{count}%2Cnull%2Cnull%5D%2Cnull%2C%5Bnull%2C{score}%5D%5D%2C%5B%5C%22{app_id}%5C%22%2C{store_id}%5D%5D%22%2Cnull%2C%22generic%22%5D%5D%5D"
         PAYLOAD_FORMAT_FOR_PAGINATED_PAGE = "f.req=%5B%5B%5B%22UsvDTd%22%2C%22%5Bnull%2Cnull%2C%5B2%2C{sort}%2C%5B{count}%2Cnull%2C%5C%22{pagination_token}%5C%22%5D%2Cnull%2C%5Bnull%2C{score}%5D%5D%2C%5B%5C%22{app_id}%5C%22%2C{store_id}%5D%5D%22%2Cnull%2C%22generic%22%5D%5D%5D"
 
+        PAYLOAD_FORMAT_FOR_BOOKS_FIRST_PAGE = "f.req=%5B%5B%5B%22oCPfdb%22%2C%22%5Bnull%2C%5B2%2C{sort}%2C%5B{count}%2Cnull%2Cnull%5D%2Cnull%2C%5Bnull%2C{score}%5D%5D%2C%5B%5C%22{app_id}%5C%22%2C{store_id}%5D%5D%22%2Cnull%2C%22generic%22%5D%5D%5D"
+        PAYLOAD_FORMAT_FOR_BOOKS_PAGINATED_PAGE = "f.req=%5B%5B%5B%22oCPfdb%22%2C%22%5Bnull%2C%5B2%2C{sort}%2C%5B{count}%2Cnull%2C%5C%22{pagination_token}%5C%22%5D%2Cnull%2C%5Bnull%2C{score}%5D%5D%2C%5B%5C%22{app_id}%5C%22%2C{store_id}%5D%5D%22%2Cnull%2C%22generic%22%5D%5D%5D"
+
         def build_body(
             self,
             store_id: int,
@@ -51,8 +54,15 @@ class Formats:
             filter_score_with: int,
             pagination_token: str,
         ) -> bytes:
+            if store_id == 9:
+                paginated_format = self.PAYLOAD_FORMAT_FOR_BOOKS_PAGINATED_PAGE
+                first_page_format = self.PAYLOAD_FORMAT_FOR_BOOKS_FIRST_PAGE
+            else:
+                paginated_format = self.PAYLOAD_FORMAT_FOR_PAGINATED_PAGE
+                first_page_format = self.PAYLOAD_FORMAT_FOR_FIRST_PAGE
+
             if pagination_token is not None:
-                result = self.PAYLOAD_FORMAT_FOR_PAGINATED_PAGE.format(
+                result = paginated_format.format(
                     store_id=store_id,
                     app_id=app_id,
                     sort=sort,
@@ -61,7 +71,7 @@ class Formats:
                     pagination_token=pagination_token,
                 )
             else:
-                result = self.PAYLOAD_FORMAT_FOR_FIRST_PAGE.format(
+                result = first_page_format.format(
                     store_id=store_id, app_id=app_id, sort=sort, score=filter_score_with, count=count
                 )
 

@@ -11,6 +11,7 @@ from google_play_scraper.utils.request import post
 
 
 MAX_COUNT_EACH_FETCH = 199
+MAX_COUNT_EACH_FETCH_BOOKS = 99
 
 
 class _ContinuationToken:
@@ -49,7 +50,15 @@ def _fetch_review_items(
 
     match = json.loads(Regex.REVIEWS.findall(dom)[0])
 
-    return json.loads(match[0][2])[0], json.loads(match[0][2])[-1][-1]
+    if store_id == 9:
+        try:
+            token = json.loads(match[0][2])[-2][-1]
+        except:
+            token = []
+    else:
+        token = json.loads(match[0][2])[-1][-1]
+
+    return json.loads(match[0][2])[0], token
 
 
 def reviews(
@@ -84,13 +93,15 @@ def reviews(
     _fetch_count = count
 
     result = []
+    max_count_per_fetch = MAX_COUNT_EACH_FETCH_BOOKS \
+        if store_id == 9 else MAX_COUNT_EACH_FETCH
 
     while True:
         if _fetch_count == 0:
             break
 
-        if _fetch_count > MAX_COUNT_EACH_FETCH:
-            _fetch_count = MAX_COUNT_EACH_FETCH
+        if _fetch_count > max_count_per_fetch:
+            _fetch_count = max_count_per_fetch
 
         try:
             review_items, token = _fetch_review_items(
@@ -127,12 +138,14 @@ def reviews_all(store_id: int, app_id: str, sleep_milliseconds: int = 0, **kwarg
     continuation_token = None
 
     result = []
+    max_count_per_fetch = MAX_COUNT_EACH_FETCH_BOOKS \
+        if store_id == 9 else MAX_COUNT_EACH_FETCH
 
     while True:
         _result, continuation_token = reviews(
             store_id,
             app_id,
-            count=MAX_COUNT_EACH_FETCH,
+            count=max_count_per_fetch,
             continuation_token=continuation_token,
             **kwargs
         )
