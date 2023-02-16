@@ -109,7 +109,6 @@ class Formats:
         def build_body(self, *args):
             return None
 
-
     Detail = _Detail()
     Reviews = _Reviews()
     Permissions = _Permissions()

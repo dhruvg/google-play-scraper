@@ -58,7 +58,7 @@ def _fetch_review_items(
     else:
         token = json.loads(match[0][2])[-1][-1]
 
-    return json.loads(match[0][2])[0], token
+    return json.loads(match[0][2])[0] or [], token
 
 
 def reviews(
